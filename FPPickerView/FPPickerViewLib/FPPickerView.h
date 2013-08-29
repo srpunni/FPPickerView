@@ -13,14 +13,18 @@ typedef enum {
     FPPickerViewPositionDown
 } FPPickerViewPosition;
 @protocol FPPickerViewDelegate <NSObject>
--(NSString*) pickerView:(FPPickerView*)pickerView titleForRowAtIndex:(int)index;
+
 @optional
 -(void) pickerView:(FPPickerView*)pickerView didSelectRowAtIndex:(int)index;
 -(void) pickerView:(FPPickerView*)pickerView didSelectObject:(id)object;
+
+-(void) pickerView:(FPPickerView*)pickerView didChangetIndex:(int)fromIndex toIndex:(int)toIndex;
+-(void) pickerView:(FPPickerView*)pickerView didChangeObject:(id)fromObject toObject:(id)toObject;
+
 @end
 
 @protocol FPPickerViewDataSource <NSObject>
-
+-(NSString*) pickerView:(FPPickerView*)pickerView titleForRowAtIndex:(int)index;
 -(int) numberOfRowsInPickerView:(FPPickerView*)pickerView;
 @end
 

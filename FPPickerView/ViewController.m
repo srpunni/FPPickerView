@@ -36,7 +36,7 @@
     test=[[Test alloc]init];
     test.name=@"mmmmmm";
     [array addObject:test];
-    pickerView=[textField addDropDownWithTitles:array titleVariableName:@"name"];
+    pickerView=[textField addDropDownWithTitles:array titleVariableName:@"name" andTintColor:[UIColor brownColor]];
     
     
     array=[[NSMutableArray alloc]init];
@@ -52,7 +52,7 @@
     test=[[Test alloc]init];
     test.name=@"ddddd";
     [array addObject:test];
-    pickerView2=[textField2 addDropDownWithTitles:array titleVariableName:@"name"];
+    pickerView2=[textField2 addDropDownWithTitles:array titleVariableName:@"name" andTintColor:[UIColor purpleColor]];
     pickerView2.position=FPPickerViewPositionUp;
   	// Do any additional setup after loading the view, typically from a nib.
 }

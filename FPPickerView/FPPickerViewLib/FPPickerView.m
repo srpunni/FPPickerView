@@ -18,6 +18,7 @@
     __weak IBOutlet UIToolbar *toolbar;
     int tempSelectedIndex;
     BOOL isVisible;
+    UIColor* tcolor;
 }
 
 @end
@@ -37,14 +38,15 @@
 }
 +(FPPickerView*) pickerViewOnTextField:(UITextField*)textField withItems:(NSMutableArray*)array andTitleVariableName:(NSString*)propertyVariableName andColor:(UIColor*)tColor
 {
-    [TraingularView setColor:tColor];
+   
     FPPickerView* fpPickerView=[[FPPickerView alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+    fpPickerView->tcolor=tColor;
         [fpPickerView->pickerBackgroundView setBackgroundColor:tColor];
     [fpPickerView->toolbar setTintColor:tColor];
     fpPickerView.selectedIndex=0;
     fpPickerView.position=FPPickerViewPositionDown;
     fpPickerView.dropDownTextField=textField;
-    fpPickerView.borderWidth=10;
+    fpPickerView.borderWidth=12;
     fpPickerView->pickerView.delegate=fpPickerView;
     fpPickerView.dropDownTextField.delegate=fpPickerView;
     fpPickerView.items=array;
@@ -94,7 +96,7 @@
 {
     NSString* title=@"";
     if ([self.delegate respondsToSelector:@selector(pickerView:titleForRowAtIndex:)]) {
-        title=  [self.delegate pickerView:self titleForRowAtIndex:row];
+        title=  [self.datasource pickerView:self titleForRowAtIndex:row];
     }
    else if (self.items.count>row) {
         id object=[self.items objectAtIndex:row];
@@ -111,12 +113,7 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
     tempSelectedIndex=row;
-    if ([self.delegate respondsToSelector:@selector(pickerView:didSelectRowAtIndex:)]) {
-        return [self.delegate pickerView:self didSelectRowAtIndex:row];
-    }
-    if ([self.delegate respondsToSelector:@selector(pickerView:didSelectObject:)]) {
-        return [self.delegate pickerView:self didSelectObject:[self.items objectAtIndex:row]];
-    }
+   
 }
 #pragma -mark UITextFieldDelegate
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
@@ -136,6 +133,7 @@
 }
 -(void) showPicker
 {
+     [TraingularView setColor:tcolor];
     [self hideOtheres];
     [self.dropDownTextField.superview endEditing:YES];
     [self updatePickerPosition];
@@ -246,6 +244,7 @@
 -(void) updateTextField
 {
     @try {
+        int prevIndex=self.selectedIndex;
         self.selectedIndex=tempSelectedIndex;
         id object=[self.items objectAtIndex:self.selectedIndex];
         
@@ -257,6 +256,19 @@
             NSString* title=[object valueForKey:self.titlePropertyVariableName];
             self.dropDownTextField.text=title;
         }
+        if ([self.delegate respondsToSelector:@selector(pickerView:didSelectRowAtIndex:)]) {
+            return [self.delegate pickerView:self didSelectRowAtIndex:self.selectedIndex];
+        }
+        if ([self.delegate respondsToSelector:@selector(pickerView:didSelectObject:)]) {
+            return [self.delegate pickerView:self didSelectObject:[self.items objectAtIndex:self.selectedIndex]];
+        }
+        if ([self.delegate respondsToSelector:@selector(pickerView:didChangetIndex:toIndex:)]) {
+            return [self.delegate pickerView:self didChangetIndex:prevIndex toIndex:self.selectedIndex];
+        }
+        if ([self.delegate respondsToSelector:@selector(pickerView:didChangeObject:toObject:)]) {
+            return [self.delegate pickerView:self didChangeObject:[self.items objectAtIndex:prevIndex] toObject:[self.items objectAtIndex:self.selectedIndex]];
+        }
+
     }
     @catch (NSException *exception) {
         NSLog(@"hh=%@",exception);
